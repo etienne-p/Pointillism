@@ -83,13 +83,18 @@ void DrawRenderApp::setup()
     pingFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     pongFbo = gl::Fbo( FBO_WIDTH, FBO_HEIGHT, format );
     
-    // clear out the ping FBO with white
     pingFbo.bindFramebuffer();
-	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+	gl::clear();
     pingFbo.unbindFramebuffer();
+    
+    pongFbo.bindFramebuffer();
+	gl::clear();
+    pongFbo.unbindFramebuffer();
     
     // mParams = params::InterfaceGl::create( "Projection", Vec2i( 225, 200 ) );
     // mParams->addParam( "FOV", &FOV).min(.0f).max(2.0f * M_PI);
+    
+    
 }
 
 gl::GlslProgRef DrawRenderApp::loadShader(string vert, string frag)
@@ -188,15 +193,13 @@ void DrawRenderApp::draw()
     gl::Fbo * currentFrame = pingPongFlag ? &pongFbo : &pingFbo;
     
     currentFrame->bindFramebuffer();
-    prevFrame->getTexture(0).bind(1);
     
-    // clear the window to black
 	gl::setMatricesWindow( mFbo.getSize() );
 	gl::setViewport( mFbo.getBounds() );
     gl::clear();
     
     mPostShader->bind();
-    
+    prevFrame->getTexture(0).bind(1);
     mPostShader->uniform( "previousFrame", 1 );
     
     gl::draw( mFbo.getTexture(0), mFbo.getBounds() );
@@ -204,6 +207,7 @@ void DrawRenderApp::draw()
 	mPostShader->unbind();
     
     currentFrame->unbindFramebuffer();
+    
     gl::setMatricesWindow( getWindowSize() );
     gl::setViewport( getWindowBounds() );
     gl::clear();
