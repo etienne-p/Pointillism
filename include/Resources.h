@@ -13,4 +13,5 @@
 
 #define RES_NORMAL_FRAG        CINDER_RESOURCE( ../resources/, frag_normal.glsl, 134, GLSL )
 
-#define RES_TEX_HATCH        CINDER_RESOURCE( ../resources/, hatch_256x256.png, 135, PNG )
+#define RES_TEX_DOT        CINDER_RESOURCE( ../resources/, pen.png, 135, PNG )
+#define RES_TEX_NOISE        CINDER_RESOURCE( ../resources/, noise.jpg, 136, JPG )

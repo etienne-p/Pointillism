@@ -31,6 +31,7 @@ class DrawRenderApp : public AppBasic {
     
     params::InterfaceGlRef mParams;
     gl::Texture mTexture;
+    gl::Texture mNoiseTexture;
     gl::GlslProgRef mShader; // shader used to render to fbo
     gl::GlslProgRef mNormalShader; // shader used to render normals to fbo
     gl::GlslProgRef mPostShader; // shader used process fbo texture
@@ -68,7 +69,18 @@ void DrawRenderApp::setup()
     try {
         gl::Texture::Format fmt;
         fmt.setWrap(GL_REPEAT, GL_REPEAT);
-        mTexture = gl::Texture(loadImage(loadResource(RES_TEX_HATCH)), fmt);
+        mTexture = gl::Texture(loadImage(loadResource(RES_TEX_DOT)), fmt);
+	}
+	catch( gl::GlslProgCompileExc &exc ) {
+		std::cout << "Texture loading error: " << std::endl;
+		std::cout << exc.what();
+        return;
+	}
+    
+    try {
+        gl::Texture::Format fmt;
+        fmt.setWrap(GL_REPEAT, GL_REPEAT);
+        mNoiseTexture = gl::Texture(loadImage(loadResource(RES_TEX_NOISE)), fmt);
 	}
 	catch( gl::GlslProgCompileExc &exc ) {
 		std::cout << "Texture loading error: " << std::endl;
@@ -199,8 +211,14 @@ void DrawRenderApp::draw()
     gl::clear();
     
     mPostShader->bind();
+    // bind textures
     prevFrame->getTexture(0).bind(1);
     mPostShader->uniform( "previousFrame", 1 );
+    mNoiseTexture.bind(2);
+    mPostShader->uniform( "noise", 2 );
+    mTexture.bind(3);
+    mPostShader->uniform( "pen", 3 );
+    mPostShader->uniform( "time", (float)getElapsedSeconds() * 1000.0f );
     
     gl::draw( mFbo.getTexture(0), mFbo.getBounds() );
     
