@@ -10,31 +10,31 @@
 	<string>DrawRender</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</key>
+		<key>55115E46CBB8D7D46632CC787DCD557BA8BF8070</key>
 		<string>https://bitbucket.org/etienne-p/drawrender.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>xcode/DrawRender.xcodeproj/project.xcworkspace</string>
+	<string>xcode/DrawRender.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</key>
+		<key>55115E46CBB8D7D46632CC787DCD557BA8BF8070</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://bitbucket.org/etienne-p/drawrender.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</string>
+	<string>55115E46CBB8D7D46632CC787DCD557BA8BF8070</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</string>
+			<string>55115E46CBB8D7D46632CC787DCD557BA8BF8070</string>
 			<key>IDESourceControlWCCName</key>
-			<string>DrawRender</string>
+			<string>drawrender</string>
 		</dict>
 	</array>
 </dict>
