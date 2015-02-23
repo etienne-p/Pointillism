@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7FD4B15F-105B-453E-8AAC-2DFAB27F5E12</string>
+	<key>IDESourceControlProjectName</key>
+	<string>DrawRender</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</key>
+		<string>https://bitbucket.org/etienne-p/drawrender.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>xcode/DrawRender.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://bitbucket.org/etienne-p/drawrender.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>03D7E02C-EFA1-4CD8-A7A4-9F5729F68A25</string>
+			<key>IDESourceControlWCCName</key>
+			<string>DrawRender</string>
+		</dict>
+	</array>
+</dict>
+</plist>

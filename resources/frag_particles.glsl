@@ -1,9 +1,11 @@
 #version 120
 
-uniform sampler2D tex0;
+uniform sampler2D particleTex;
 
 void main () {
     
-    gl_FragColor = texture2D(tex0, gl_TexCoord[0].st) * gl_Color;
+    //gl_FragColor = texture2D(particleTex, gl_TexCoord[0].st) * gl_Color;
+    gl_FragColor = texture2D(particleTex, gl_PointCoord) * gl_Color;
+    
     
 }

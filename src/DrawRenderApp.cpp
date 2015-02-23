@@ -70,7 +70,7 @@ void DrawRenderApp::setup()
     
     gl::VboMesh::Layout layout;
     //layout.setStaticColorsRGBA();
-    layout.setStaticTexCoords2d();
+    //layout.setStaticTexCoords2d();
     layout.setStaticPositions();
     
     vector<ColorA> colors;
@@ -89,7 +89,7 @@ void DrawRenderApp::setup()
     
     particlesVbo = gl::VboMesh::create(P_COUNT, 0, layout, GL_POINTS);
     particlesVbo->bufferPositions( &(vertices.front()), vertices.size() );
-    particlesVbo->bufferTexCoords2d( 0, texcoords );
+    //particlesVbo->bufferTexCoords2d( 0, texcoords );
     //particlesVbo->bufferColorsRGBA(colors);
     
     
@@ -265,7 +265,7 @@ void DrawRenderApp::enablePointSprites()
     
 	// bind shader
 	mParticlesShader->bind();
-	mParticlesShader->uniform("tex0", 0);
+	mParticlesShader->uniform("particleTex", 0);
 }
 
 void DrawRenderApp::disablePointSprites()
