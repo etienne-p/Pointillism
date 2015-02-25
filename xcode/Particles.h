@@ -26,7 +26,7 @@ class Particles {
 
 public:
     Particles();
-    void setup(int pCount, float fboWidth, float fboHeight);
+    void setup(int particlesCount_, float fboWidth, float fboHeight);
     void update();
     void draw();
     gl::Fbo * getFbo();
@@ -37,6 +37,7 @@ private:
     void updatePhysics();
     void renderFbo();
     
+    int particlesCount;
     gl::VboMeshRef mVbo;
     unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;

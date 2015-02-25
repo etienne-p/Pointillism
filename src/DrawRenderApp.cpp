@@ -54,7 +54,7 @@ void DrawRenderApp::setup()
     loader.load( &mTeapotMesh );
     mTeapotVBO = gl::VboMesh::create( mTeapotMesh);
     
-    mShader =  gl::GlslProg::create( loadResource( RES_VERT ), loadResource( RES_FRAG) );
+    mShader =  gl::GlslProg::create( loadResource( RES_BASIC_VERT ), loadResource( RES_BASIC_FRAG) );
     
     sceneFbo = unique_ptr<gl::Fbo>(new gl::Fbo( FBO_WIDTH, FBO_HEIGHT ));
     

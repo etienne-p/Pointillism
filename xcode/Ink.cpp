@@ -14,7 +14,7 @@ void Ink::setup(float fboWidth, float fboHeight)
 {
     pingPongFlag = true;
     
-    mShader =  gl::GlslProg::create( loadResource( RES_POST_VERT ), loadResource( RES_POST_FRAG) );
+    mShader =  gl::GlslProg::create( loadResource( RES_INK_VERT ), loadResource( RES_INK_FRAG) );
     
     gl::Texture::Format fmt;
     fmt.setWrap(GL_REPEAT, GL_REPEAT);
