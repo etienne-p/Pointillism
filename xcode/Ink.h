@@ -25,15 +25,16 @@ using namespace std;
 class Ink {
     
 public:
-    
+    Ink();
     void setup(float fboWidth, float fboHeight);
-    void update();
-    void draw(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo);
+    void update(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo);
+    gl::Fbo * getFbo();
     
-    gl::Fbo pingFbo;
-    gl::Fbo pongFbo;
+private:
+    unique_ptr<gl::Fbo> pingFbo;
+    unique_ptr<gl::Fbo> pongFbo;
     gl::GlslProgRef mShader;
-    gl::Texture noiseTexture;
+    gl::TextureRef noiseTexture;
     bool pingPongFlag;
     
 };

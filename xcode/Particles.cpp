@@ -8,11 +8,15 @@
 
 #include "Particles.h"
 
-void Particles::setup(int pCount, float mFboWidth, float mFboHeight)
+Particles::Particles(){}
+
+void Particles::setup(int pCount, float fboWidth, float fboHeight)
 {
+    mFbo = unique_ptr<gl::Fbo>(new gl::Fbo(fboWidth, fboHeight));
+    
     mShader =  gl::GlslProg::create( loadResource( RES_PARTICLES_VERT ), loadResource( RES_PARTICLES_FRAG ) );
     
-    mTexture = gl::Texture(loadImage(loadResource(RES_TEX_DOT)));
+    mTexture = gl::Texture::create(loadImage(loadResource(RES_TEX_DOT)));
     
     gl::VboMesh::Layout layout;
     layout.setStaticPositions();
@@ -25,7 +29,9 @@ void Particles::setup(int pCount, float mFboWidth, float mFboHeight)
     while(i < pCount){
         colors.push_back(white);
         texcoords.push_back( Vec2f( 10.0f, 10.0f ));
-        vertices.push_back(Vec3f(Rand::randFloat(mFboWidth * .1f, mFboWidth * .9f), Rand::randFloat(mFboHeight * .1f, mFboHeight * .9f), .0f));
+        vertices.push_back(Vec3f(
+            Rand::randFloat(fboWidth * .1f, fboWidth * .9f),
+            Rand::randFloat(fboHeight * .1f, fboHeight * .9f), .0f));
         i++;
     }
     
@@ -34,6 +40,12 @@ void Particles::setup(int pCount, float mFboWidth, float mFboHeight)
 }
 
 void Particles::update()
+{
+    updatePhysics();
+    renderFbo();
+}
+
+void Particles::updatePhysics()
 {/*
     gl::mVboMesh::VertexIter iter = mVbo->mapVertexBuffer();
     const Vec3f one(1.0f, 1.0f, 1.0f);
@@ -47,14 +59,14 @@ void Particles::update()
     }*/
 }
 
-void Particles::draw()
+void Particles::renderFbo()
 {
-    mFbo.bindFramebuffer();
+    mFbo->bindFramebuffer();
     
-    mTexture.bind(0);
+    mTexture->bind(0);
     
-    gl::setMatricesWindow( mFbo.getSize() );
-    gl::setViewport( mFbo.getBounds() );
+    gl::setMatricesWindow( mFbo->getSize() );
+    gl::setViewport( mFbo->getBounds() );
     gl::clear(Color::black());
     
     gl::enableAdditiveBlending();
@@ -67,9 +79,9 @@ void Particles::draw()
     disablePointSprites();
     gl::disableAlphaBlending();
     
-    mTexture.unbind();
+    mTexture->unbind();
     
-    mFbo.unbindFramebuffer();
+    mFbo->unbindFramebuffer();
 }
 
 void Particles::enablePointSprites()
@@ -98,4 +110,9 @@ void Particles::disablePointSprites()
     
     // restore OpenGL state
     glPopAttrib();
+}
+
+gl::Fbo * Particles::getFbo()
+{
+    return mFbo.get();
 }

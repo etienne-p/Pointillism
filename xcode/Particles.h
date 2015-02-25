@@ -25,20 +25,22 @@ using namespace std;
 class Particles {
 
 public:
-    
+    Particles();
     void setup(int pCount, float fboWidth, float fboHeight);
     void update();
     void draw();
+    gl::Fbo * getFbo();
     
+private:
     void enablePointSprites();
     void disablePointSprites();
+    void updatePhysics();
+    void renderFbo();
     
     gl::VboMeshRef mVbo;
-    gl::Fbo mFbo;
+    unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;
-    gl::Texture mTexture;
-    
-    
+    gl::TextureRef mTexture;
 };
 
 #endif /* defined(__DrawRender__Particles__) */

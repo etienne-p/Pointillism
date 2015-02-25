@@ -11,6 +11,9 @@
 
 #include "Resources.h"
 
+// Custom
+#include "Ink.h"
+#include "Particles.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -28,16 +31,20 @@ class DrawRenderApp : public AppBasic {
     
     // helpers
     void drawModel(const Matrix44f& modelMatrix);
-    gl::GlslProgRef loadShader(string vert, string frag);
     
     params::InterfaceGlRef mParams;
     gl::GlslProgRef mShader; // shader used to render to fbo
     Vec2f mMousePos;
     
-    gl::VboMesh mTeapotVBO;
+    gl::VboMeshRef mTeapotVBO;
     TriMesh mTeapotMesh;
     
-    gl::Fbo sceneFbo;
+    unique_ptr<gl::Fbo> sceneFbo;
+    
+    unique_ptr<Ink> ink;
+    
+    unique_ptr<Particles> particles;
+    
     static const int FBO_WIDTH = 1024, FBO_HEIGHT = 1024;
 };
 
@@ -45,12 +52,17 @@ void DrawRenderApp::setup()
 {
     ObjLoader loader( (DataSourceRef)loadResource( RES_TEAPOT_OBJ ) );
     loader.load( &mTeapotMesh );
-    mTeapotVBO = gl::VboMesh( mTeapotMesh);
+    mTeapotVBO = gl::VboMesh::create( mTeapotMesh);
     
-        
-    mShader = loadShader(RES_VERT, RES_FRAG);
+    mShader =  gl::GlslProg::create( loadResource( RES_VERT ), loadResource( RES_FRAG) );
     
-    sceneFbo     = gl::Fbo( FBO_WIDTH, FBO_HEIGHT );
+    sceneFbo = unique_ptr<gl::Fbo>(new gl::Fbo( FBO_WIDTH, FBO_HEIGHT ));
+    
+    ink = unique_ptr<Ink>(new Ink());
+    ink->setup(FBO_WIDTH, FBO_HEIGHT);
+    
+    particles = unique_ptr<Particles>(new Particles());
+    particles->setup(4000, FBO_WIDTH, FBO_HEIGHT);
     
     // mParams = params::InterfaceGl::create( "Projection", Vec2i( 225, 200 ) );
     // mParams->addParam( "FOV", &FOV).min(.0f).max(2.0f * M_PI);
@@ -71,11 +83,11 @@ void DrawRenderApp::renderToFBO()
 	gl::enableDepthRead();
     
     // camera & viewport setup once, both FBOs are same size
-    gl::setViewport( sceneFbo.getBounds() );
+    gl::setViewport( sceneFbo->getBounds() );
     
-    CameraPersp mCam( sceneFbo.getWidth(), sceneFbo.getHeight(), 60.0f );
+    CameraPersp mCam( sceneFbo->getWidth(), sceneFbo->getHeight(), 60.0f );
     mCam.lookAt( Vec3f(0, 0, -10 ), Vec3f::zero() );
-    mCam.setPerspective( 60, sceneFbo.getAspectRatio(), 1, 1000 );
+    mCam.setPerspective( 60, sceneFbo->getAspectRatio(), 1, 1000 );
 	gl::setMatrices( mCam );
     
     Vec3f modelPosition(.0f, .0f, 20.0f);
@@ -89,7 +101,7 @@ void DrawRenderApp::renderToFBO()
     modelMatrix.rotate(Vec3f(1.0f, 1.0f, .0f), angle);
     
     // Draw Lightened Scene
-    sceneFbo.bindFramebuffer();
+    sceneFbo->bindFramebuffer();
     gl::clear(Color::black());
     gl::color(Color::white());
 	mShader->bind();
@@ -121,6 +133,8 @@ void DrawRenderApp::resize()
 void DrawRenderApp::update()
 {
     renderToFBO();
+    particles->update();
+    ink->update(ink->getFbo(), particles->getFbo());
 }
 
 void DrawRenderApp::draw()
@@ -129,7 +143,7 @@ void DrawRenderApp::draw()
     gl::setMatricesWindow( getWindowSize() );
     gl::setViewport( getWindowBounds() );
     gl::clear();
-    gl::draw( particlesFbo.getTexture(0), getWindowBounds() );
+    gl::draw( particles->getFbo()->getTexture(0), getWindowBounds() );
 	   
     //mParams->draw();
     

@@ -8,6 +8,8 @@
 
 #include "Ink.h"
 
+Ink::Ink(){}
+
 void Ink::setup(float fboWidth, float fboHeight)
 {
     pingPongFlag = true;
@@ -16,31 +18,26 @@ void Ink::setup(float fboWidth, float fboHeight)
     
     gl::Texture::Format fmt;
     fmt.setWrap(GL_REPEAT, GL_REPEAT);
-    noiseTexture = gl::Texture(loadImage(loadResource(RES_TEX_NOISE)), fmt);
+    noiseTexture = gl::Texture::create(loadImage(loadResource(RES_TEX_NOISE)), fmt);
     
-    pingFbo = gl::Fbo( fboWidth, fboHeight );
-    pongFbo = gl::Fbo( fboWidth, fboHeight );
+    pingFbo = unique_ptr<gl::Fbo>(new gl::Fbo(fboWidth, fboHeight));
+    pongFbo = unique_ptr<gl::Fbo>(new gl::Fbo(fboWidth, fboHeight));
     
     // make sure both fbos are cleared
     // TODO: necessary, best method?
-    pingFbo.bindFramebuffer();
+    pingFbo->bindFramebuffer();
     gl::clear();
-    pingFbo.unbindFramebuffer();
+    pingFbo->unbindFramebuffer();
     
-    pongFbo.bindFramebuffer();
+    pongFbo->bindFramebuffer();
     gl::clear();
-    pongFbo.unbindFramebuffer();
+    pongFbo->unbindFramebuffer();
 }
 
-void Ink::update()
+void Ink::update(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo)
 {
-
-}
-
-void Ink::draw(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo)
-{
-    gl::Fbo * prevFrame = pingPongFlag ? &pingFbo : &pongFbo;
-    gl::Fbo * currentFrame = pingPongFlag ? &pongFbo : &pingFbo;
+    auto prevFrame = pingPongFlag ? pingFbo.get() : pongFbo.get();
+    auto currentFrame = pingPongFlag ? pongFbo.get() : pingFbo.get();
     
     currentFrame->bindFramebuffer();
     
@@ -52,7 +49,7 @@ void Ink::draw(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo)
     // bind textures
     prevFrame->getTexture(0).bind(1);
     mShader->uniform( "previousFrame", 1 );
-    noiseTexture.bind(2);
+    noiseTexture->bind(2);
     mShader->uniform( "noise", 2 );
     particlesFbo->getTexture().bind(3);
     mShader->uniform( "pen", 3 );
@@ -66,4 +63,9 @@ void Ink::draw(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo)
     
     pingPongFlag = !pingPongFlag; // toggle
 
+}
+
+gl::Fbo * Ink::getFbo()
+{
+    return pingPongFlag ? pongFbo.get() : pingFbo.get();
 }
