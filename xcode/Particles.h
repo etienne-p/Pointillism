@@ -25,6 +25,7 @@ using namespace std;
 class Particles {
 
 public:
+    
     Particles();
     void setup(int particlesCount_, float fboWidth, float fboHeight);
     void update();
@@ -32,12 +33,23 @@ public:
     gl::Fbo * getFbo();
     
 private:
+    
+    struct Particle
+    {
+        Vec2f velocity;
+        Vec2f position;
+        float size;
+    };
+    
     void enablePointSprites();
     void disablePointSprites();
     void updatePhysics();
     void renderFbo();
+    void reset(Particle& p, const Area&  bounds);
+    void resetFromOuterArea(Particle& p, const Area& bounds);
     
     int particlesCount;
+    vector<Particle> particles;
     gl::VboMeshRef mVbo;
     unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;

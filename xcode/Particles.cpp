@@ -25,7 +25,14 @@ void Particles::setup(int particlesCount_, float fboWidth, float fboHeight)
     layout.setDynamicNormals();
     
     mVbo = gl::VboMesh::create(particlesCount, 0, layout, GL_POINTS);
-    //mVbo->bufferPositions( &(vertices.front()), vertices.size() );
+    
+    
+    for (int i = 0; i < particlesCount; ++i)
+    {
+        Particle p;
+        reset(p, mFbo->getBounds());
+        particles.push_back(p);
+    }
 }
 
 void Particles::update()
@@ -36,15 +43,16 @@ void Particles::update()
 
 void Particles::updatePhysics()
 {
+    // update particles & sync vertices on particles
     gl::VboMesh::VertexIter iter = mVbo->mapVertexBuffer();
-    const float w = (float)mFbo->getWidth();
-    const float h = (float)mFbo->getHeight();
     for( int i = 0; i < particlesCount; ++i ) {
-        iter.setPosition(Vec3f(
-                               Rand::randFloat(w * .1f, w * .9f),
-                               Rand::randFloat(h * .1f, h * .9f),
-                               .0f));
-        iter.setNormal(Vec3f(Rand::randFloat(1.0f, 20.0f), .0f, .0f));
+        particles[i].position += particles[i].velocity;
+        if (mFbo->getBounds().contains(particles[i].position))
+        {
+            resetFromOuterArea(particles[i], mFbo->getBounds());
+        }
+        iter.setPosition(particles[i].position.x, particles[i].position.y, .0f);
+        iter.setNormal(Vec3f(Rand::randFloat(1.0f, 20.0f), .0f, .0f)); // we use normal.x -> pointSize
         ++iter;
     }
 }
@@ -105,4 +113,52 @@ void Particles::disablePointSprites()
 gl::Fbo * Particles::getFbo()
 {
     return mFbo.get();
+}
+
+void Particles::reset(Particle& p, const Area& bounds)
+{
+    p.position.set(Rand::randFloat(bounds.getX1(), bounds.getX2()), Rand::randFloat( bounds.getY1(), bounds.getY2()));
+    const float angle = Rand::randFloat(.0f, M_PI_2);
+    const float radius = 2.0f;
+    p.velocity.set(radius * cos(angle), radius * sin(angle));
+    p.size = 10.0f;
+}
+
+void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
+{
+    // random point on a rectangle border
+    int side = Rand::randInt(0, 4); // upper limit not included
+    Vec2f a, b; // select a segment [a, b] clockwise
+    float sideNormalAngle;
+    switch (side) {
+        case 0:
+            a.set(bounds.getX1(), bounds.getY1());
+            b.set(bounds.getX2(), bounds.getY1());
+            sideNormalAngle = M_PI * -.5f;
+            break;
+            
+        case 1:
+            a.set(bounds.getX2(), bounds.getY1());
+            b.set(bounds.getX2(), bounds.getY2());
+            sideNormalAngle = M_PI;
+            break;
+            
+        case 2:
+            a.set(bounds.getX1(), bounds.getY2());
+            b.set(bounds.getX2(), bounds.getY2());
+            sideNormalAngle = M_PI * .5f;
+            break;
+            
+        case 3:
+            a.set(bounds.getX1(), bounds.getY1());
+            b.set(bounds.getX1(), bounds.getY2());
+            sideNormalAngle = .0f;
+            break;
+    }
+    
+    p.position.set(a + (b - a) * Rand::randFloat(.0f, 1.0f));
+    const float angle = sideNormalAngle + Rand::randFloat(M_PI * -.25f, M_PI * .25f);
+    const float radius = 2.0f;
+    p.velocity.set(radius * cos(angle), radius * sin(angle));
+    p.size = 10.0f;
 }
