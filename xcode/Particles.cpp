@@ -20,12 +20,27 @@ void Particles::setup(int particlesCount_, float fboWidth, float fboHeight)
     
     mTexture = gl::Texture::create(loadImage(loadResource(RES_TEX_DOT)));
     
+    gl::Texture::Format fmt;
+    fmt.setWrap(GL_REPEAT, GL_REPEAT);
+    noiseTexture = gl::Texture::create(loadImage(loadResource(RES_TEX_NOISE)), fmt);
+    
     gl::VboMesh::Layout layout;
     layout.setDynamicPositions();
-    layout.setDynamicNormals();
-    
+    layout.setStaticColorsRGB();
     mVbo = gl::VboMesh::create(particlesCount, 0, layout, GL_POINTS);
     
+    vector<Color> colors;
+    vector<Color> baseColors;
+    
+    baseColors.push_back(Color(1.0f, .0f, .0f));
+    baseColors.push_back(Color(1.0f, 1.0f, .0f));
+    baseColors.push_back(Color(1.0f, 1.0f, 1.0f));
+    
+    for (int i = 0; i < particlesCount; ++i)
+    {
+        colors.push_back(baseColors[i % baseColors.size()]);
+    }
+    mVbo->bufferColorsRGB(colors);
     
     for (int i = 0; i < particlesCount; ++i)
     {
@@ -47,12 +62,11 @@ void Particles::updatePhysics()
     gl::VboMesh::VertexIter iter = mVbo->mapVertexBuffer();
     for( int i = 0; i < particlesCount; ++i ) {
         particles[i].position += particles[i].velocity;
-        if (mFbo->getBounds().contains(particles[i].position))
+        if (!mFbo->getBounds().contains(particles[i].position))
         {
             resetFromOuterArea(particles[i], mFbo->getBounds());
         }
         iter.setPosition(particles[i].position.x, particles[i].position.y, .0f);
-        iter.setNormal(Vec3f(Rand::randFloat(1.0f, 20.0f), .0f, .0f)); // we use normal.x -> pointSize
         ++iter;
     }
 }
@@ -70,9 +84,12 @@ void Particles::renderFbo()
     gl::enableAdditiveBlending();
     enablePointSprites();
     
+    noiseTexture->bind(1);
+    mShader->uniform( "perlin", 1);
+    mShader->uniform( "pointSizeMul", 5.0f);
+    
     gl::color(Color::white());
     gl::draw(mVbo);
-    
     
     disablePointSprites();
     gl::disableAlphaBlending();
@@ -119,9 +136,8 @@ void Particles::reset(Particle& p, const Area& bounds)
 {
     p.position.set(Rand::randFloat(bounds.getX1(), bounds.getX2()), Rand::randFloat( bounds.getY1(), bounds.getY2()));
     const float angle = Rand::randFloat(.0f, M_PI_2);
-    const float radius = 2.0f;
+    const float radius = Rand::randFloat(.05f, 40.0f);
     p.velocity.set(radius * cos(angle), radius * sin(angle));
-    p.size = 10.0f;
 }
 
 void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
@@ -134,7 +150,7 @@ void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
         case 0:
             a.set(bounds.getX1(), bounds.getY1());
             b.set(bounds.getX2(), bounds.getY1());
-            sideNormalAngle = M_PI * -.5f;
+            sideNormalAngle = M_PI * .5f;
             break;
             
         case 1:
@@ -146,7 +162,7 @@ void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
         case 2:
             a.set(bounds.getX1(), bounds.getY2());
             b.set(bounds.getX2(), bounds.getY2());
-            sideNormalAngle = M_PI * .5f;
+            sideNormalAngle = M_PI * -.5f;
             break;
             
         case 3:
@@ -157,8 +173,7 @@ void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
     }
     
     p.position.set(a + (b - a) * Rand::randFloat(.0f, 1.0f));
-    const float angle = sideNormalAngle + Rand::randFloat(M_PI * -.25f, M_PI * .25f);
-    const float radius = 2.0f;
+    const float angle = sideNormalAngle + Rand::randFloat(M_PI * -.05f, M_PI * .05f);
+    const float radius = Rand::randFloat(.05f, 40.0f);
     p.velocity.set(radius * cos(angle), radius * sin(angle));
-    p.size = 10.0f;
 }

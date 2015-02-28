@@ -15,12 +15,19 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Rand.h"
 #include "cinder/gl/Fbo.h"
+#include "cinder/Perlin.h"
 
 #include "Resources.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
+struct Particle
+{
+    Vec2f velocity;
+    Vec2f position;
+};
 
 class Particles {
 
@@ -33,13 +40,6 @@ public:
     gl::Fbo * getFbo();
     
 private:
-    
-    struct Particle
-    {
-        Vec2f velocity;
-        Vec2f position;
-        float size;
-    };
     
     void enablePointSprites();
     void disablePointSprites();
@@ -54,6 +54,8 @@ private:
     unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;
     gl::TextureRef mTexture;
+    gl::TextureRef noiseTexture;
+    Perlin mPerlin;
 };
 
 #endif /* defined(__DrawRender__Particles__) */

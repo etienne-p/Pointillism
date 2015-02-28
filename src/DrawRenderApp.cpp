@@ -62,7 +62,7 @@ void DrawRenderApp::setup()
     ink->setup(FBO_WIDTH, FBO_HEIGHT);
     
     particles = unique_ptr<Particles>(new Particles());
-    particles->setup(4000, FBO_WIDTH, FBO_HEIGHT);
+    particles->setup(24000, FBO_WIDTH, FBO_HEIGHT);
     
     // mParams = params::InterfaceGl::create( "Projection", Vec2i( 225, 200 ) );
     // mParams->addParam( "FOV", &FOV).min(.0f).max(2.0f * M_PI);
@@ -134,7 +134,7 @@ void DrawRenderApp::update()
 {
     renderToFBO();
     particles->update();
-    ink->update(ink->getFbo(), particles->getFbo());
+    ink->update(sceneFbo.get(), particles->getFbo());
 }
 
 void DrawRenderApp::draw()
@@ -143,7 +143,7 @@ void DrawRenderApp::draw()
     gl::setMatricesWindow( getWindowSize() );
     gl::setViewport( getWindowBounds() );
     gl::clear();
-    gl::draw( particles->getFbo()->getTexture(0), getWindowBounds() );
+    gl::draw( ink->getFbo()->getTexture(0), getWindowBounds() );
 	   
     //mParams->draw();
     
