@@ -54,6 +54,10 @@ void Ink::update(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo)
     particlesFbo->getTexture().bind(3);
     mShader->uniform( "pen", 3 );
     mShader->uniform( "time", (float)getElapsedSeconds() * 1000.0f );
+    mShader->uniform( "persistence", persistence );
+    mShader->uniform( "threshold", threshold );
+    mShader->uniform( "maxRate", maxRate );
+    
     
     gl::draw( sceneFbo->getTexture(0), sceneFbo->getBounds() );
     

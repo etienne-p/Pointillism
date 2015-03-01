@@ -10,10 +10,8 @@
 
 Particles::Particles(){}
 
-void Particles::setup(int particlesCount_, float fboWidth, float fboHeight)
+void Particles::setup(int count, float fboWidth, float fboHeight)
 {
-    particlesCount = particlesCount_;
-    
     mFbo = unique_ptr<gl::Fbo>(new gl::Fbo(fboWidth, fboHeight));
     
     mShader =  gl::GlslProg::create( loadResource( RES_PARTICLES_VERT ), loadResource( RES_PARTICLES_FRAG ) );
@@ -24,42 +22,59 @@ void Particles::setup(int particlesCount_, float fboWidth, float fboHeight)
     fmt.setWrap(GL_REPEAT, GL_REPEAT);
     noiseTexture = gl::Texture::create(loadImage(loadResource(RES_TEX_NOISE)), fmt);
     
+    setNumParticles(count);
+}
+
+void Particles::update(gl::Fbo * sceneFbo)
+{
+    updatePhysics();
+    renderFbo(sceneFbo);
+}
+
+
+int Particles::getNumParticles()
+{
+    return particles.size();
+}
+
+void Particles::setNumParticles(int count)
+{
+    particles.clear();
+    colors.clear();
+    if (mVbo != nullptr) mVbo->reset();
+    
     gl::VboMesh::Layout layout;
     layout.setDynamicPositions();
     layout.setStaticColorsRGB();
-    mVbo = gl::VboMesh::create(particlesCount, 0, layout, GL_POINTS);
+    mVbo = gl::VboMesh::create(count, 0, layout, GL_POINTS);
     
-    vector<Color> colors;
     vector<Color> baseColors;
-    
     baseColors.push_back(Color(1.0f, .0f, .0f));
     baseColors.push_back(Color(1.0f, 1.0f, .0f));
     baseColors.push_back(Color(1.0f, 1.0f, 1.0f));
     
-    for (int i = 0; i < particlesCount; ++i)
+    for (int i = 0; i < count; ++i)
     {
         colors.push_back(baseColors[i % baseColors.size()]);
-    }
-    mVbo->bufferColorsRGB(colors);
-    
-    for (int i = 0; i < particlesCount; ++i)
-    {
         Particle p;
         reset(p, mFbo->getBounds());
         particles.push_back(p);
     }
+    mVbo->bufferColorsRGB(colors);
 }
 
-void Particles::update()
+void Particles::syncVelocity()
 {
-    updatePhysics();
-    renderFbo();
+    for(auto it = particles.begin(); it != particles.end(); ++it) {
+        it->velocity *= Rand::randFloat(minVelocity, maxVelocity) / it->velocity.length();
+    };
 }
 
 void Particles::updatePhysics()
 {
     // update particles & sync vertices on particles
     gl::VboMesh::VertexIter iter = mVbo->mapVertexBuffer();
+    int particlesCount = particles.size();
     for( int i = 0; i < particlesCount; ++i ) {
         particles[i].position += particles[i].velocity;
         if (!mFbo->getBounds().contains(particles[i].position))
@@ -71,7 +86,7 @@ void Particles::updatePhysics()
     }
 }
 
-void Particles::renderFbo()
+void Particles::renderFbo(gl::Fbo * sceneFbo)
 {
     mFbo->bindFramebuffer();
     
@@ -86,7 +101,10 @@ void Particles::renderFbo()
     
     noiseTexture->bind(1);
     mShader->uniform( "perlin", 1);
-    mShader->uniform( "pointSizeMul", 5.0f);
+    mShader->uniform( "pointSizeMul", pointSizeMul);
+    mShader->uniform( "pointSizeVariation", pointSizeVariation);
+    sceneFbo->getTexture(0).bind(2);
+    mShader->uniform( "scene", 2 );
     
     gl::color(Color::white());
     gl::draw(mVbo);
@@ -136,7 +154,7 @@ void Particles::reset(Particle& p, const Area& bounds)
 {
     p.position.set(Rand::randFloat(bounds.getX1(), bounds.getX2()), Rand::randFloat( bounds.getY1(), bounds.getY2()));
     const float angle = Rand::randFloat(.0f, M_PI_2);
-    const float radius = Rand::randFloat(.05f, 40.0f);
+    const float radius = Rand::randFloat(minVelocity, maxVelocity);
     p.velocity.set(radius * cos(angle), radius * sin(angle));
 }
 
@@ -174,6 +192,6 @@ void Particles::resetFromOuterArea(Particle& p, const Area& bounds)
     
     p.position.set(a + (b - a) * Rand::randFloat(.0f, 1.0f));
     const float angle = sideNormalAngle + Rand::randFloat(M_PI * -.05f, M_PI * .05f);
-    const float radius = Rand::randFloat(.05f, 40.0f);
+    const float radius = Rand::randFloat(minVelocity, maxVelocity);
     p.velocity.set(radius * cos(angle), radius * sin(angle));
 }

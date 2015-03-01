@@ -5,6 +5,10 @@ uniform sampler2D previousFrame; // previous ink cells state
 uniform sampler2D noise;
 uniform sampler2D pen;
 uniform float time; // ms
+uniform float persistence;
+uniform float threshold;
+uniform float maxRate;
+
 
 void main(void)
 {
@@ -30,28 +34,25 @@ void main(void)
     float noise = texture2D(noise, gl_TexCoord[0].xy).r;
               
     // ink exchange
-    float dInkMax = 0.01;
-    float threshold = 0.2;//0.2 + 0.8 * noise;
-    
     float exchangeR = 0.0;
-    exchangeR += clamp(max(top.r    - threshold, 0.0) - max(prev.r - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeR += clamp(max(left.r   - threshold, 0.0) - max(prev.r - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeR += clamp(max(right.r  - threshold, 0.0) - max(prev.r - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeR += clamp(max(bottom.r - threshold, 0.0) - max(prev.r - threshold, 0.0), -dInkMax, dInkMax);
+    exchangeR += clamp(max(top.r    - threshold, 0.0) - max(prev.r - threshold, 0.0), -maxRate, maxRate);
+    exchangeR += clamp(max(left.r   - threshold, 0.0) - max(prev.r - threshold, 0.0), -maxRate, maxRate);
+    exchangeR += clamp(max(right.r  - threshold, 0.0) - max(prev.r - threshold, 0.0), -maxRate, maxRate);
+    exchangeR += clamp(max(bottom.r - threshold, 0.0) - max(prev.r - threshold, 0.0), -maxRate, maxRate);
     
     float exchangeG = 0.0;
-    exchangeG += clamp(max(top.g    - threshold, 0.0) - max(prev.g - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeG += clamp(max(left.g   - threshold, 0.0) - max(prev.g - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeG += clamp(max(right.g  - threshold, 0.0) - max(prev.g - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeG += clamp(max(bottom.g - threshold, 0.0) - max(prev.g - threshold, 0.0), -dInkMax, dInkMax);
+    exchangeG += clamp(max(top.g    - threshold, 0.0) - max(prev.g - threshold, 0.0), -maxRate, maxRate);
+    exchangeG += clamp(max(left.g   - threshold, 0.0) - max(prev.g - threshold, 0.0), -maxRate, maxRate);
+    exchangeG += clamp(max(right.g  - threshold, 0.0) - max(prev.g - threshold, 0.0), -maxRate, maxRate);
+    exchangeG += clamp(max(bottom.g - threshold, 0.0) - max(prev.g - threshold, 0.0), -maxRate, maxRate);
     
     float exchangeB = 0.0;
-    exchangeB += clamp(max(top.b    - threshold, 0.0) - max(prev.b - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeB += clamp(max(left.b   - threshold, 0.0) - max(prev.b - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeB += clamp(max(right.b  - threshold, 0.0) - max(prev.b - threshold, 0.0), -dInkMax, dInkMax);
-    exchangeB += clamp(max(bottom.b - threshold, 0.0) - max(prev.b - threshold, 0.0), -dInkMax, dInkMax);
+    exchangeB += clamp(max(top.b    - threshold, 0.0) - max(prev.b - threshold, 0.0), -maxRate, maxRate);
+    exchangeB += clamp(max(left.b   - threshold, 0.0) - max(prev.b - threshold, 0.0), -maxRate, maxRate);
+    exchangeB += clamp(max(right.b  - threshold, 0.0) - max(prev.b - threshold, 0.0), -maxRate, maxRate);
+    exchangeB += clamp(max(bottom.b - threshold, 0.0) - max(prev.b - threshold, 0.0), -maxRate, maxRate);
 
     //gl_FragColor = (vec4(1.0, 1.0, 1.0, 1.0) * ((prev + exchange) * 0.94)) + (sc * noise);
-    gl_FragColor = ((prev + vec4(exchangeR, exchangeG, exchangeB, 1.0)) * 0.94) + (sc * noise);
+    gl_FragColor = ((prev + vec4(exchangeR, exchangeG, exchangeB, 1.0)) * persistence) + (sc * noise);
 
 }

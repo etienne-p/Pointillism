@@ -34,22 +34,29 @@ class Particles {
 public:
     
     Particles();
-    void setup(int particlesCount_, float fboWidth, float fboHeight);
-    void update();
+    void setup(int count, float fboWidth, float fboHeight);
+    void update(gl::Fbo * sceneFbo);
+    void syncVelocity();
+    void setNumParticles(int count);
+    int getNumParticles();
     void draw();
     gl::Fbo * getFbo();
+    float pointSizeMul;
+    float pointSizeVariation;
+    float minVelocity;
+    float maxVelocity;
     
 private:
     
     void enablePointSprites();
     void disablePointSprites();
     void updatePhysics();
-    void renderFbo();
+    void renderFbo(gl::Fbo * sceneFbo);
     void reset(Particle& p, const Area&  bounds);
     void resetFromOuterArea(Particle& p, const Area& bounds);
     
-    int particlesCount;
     vector<Particle> particles;
+    vector<Color> colors;
     gl::VboMeshRef mVbo;
     unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;

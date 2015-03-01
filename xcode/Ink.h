@@ -29,6 +29,9 @@ public:
     void setup(float fboWidth, float fboHeight);
     void update(gl::Fbo * sceneFbo, gl::Fbo * particlesFbo);
     gl::Fbo * getFbo();
+    float persistence;
+    float threshold;
+    float maxRate;
     
 private:
     unique_ptr<gl::Fbo> pingFbo;

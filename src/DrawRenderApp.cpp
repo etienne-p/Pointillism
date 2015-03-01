@@ -62,10 +62,23 @@ void DrawRenderApp::setup()
     ink->setup(FBO_WIDTH, FBO_HEIGHT);
     
     particles = unique_ptr<Particles>(new Particles());
-    particles->setup(24000, FBO_WIDTH, FBO_HEIGHT);
+    particles->setup(4000, FBO_WIDTH, FBO_HEIGHT);
     
-    // mParams = params::InterfaceGl::create( "Projection", Vec2i( 225, 200 ) );
-    // mParams->addParam( "FOV", &FOV).min(.0f).max(2.0f * M_PI);
+    mParams = params::InterfaceGl::create( "Params", Vec2i( 225, 200 ) );
+    
+    mParams->addParam( "Particle Size", &(particles->pointSizeMul)).min(.0f).max(20.0f);
+    mParams->addParam( "Particle Size Variation", &(particles->pointSizeVariation)).min(.0f).max(1.0f);
+    
+	std::function<void( int )> setter	= std::bind( &Particles::setNumParticles, particles.get(), std::placeholders::_1 );
+	std::function<int ()> getter		= std::bind( &Particles::getNumParticles, particles.get() );
+	mParams->addParam( "Particles Number", setter, getter );
+    
+    mParams->addParam( "Particle Min Velocity", &(particles->minVelocity)).updateFn( [this] { particles->syncVelocity(); } );
+    mParams->addParam( "Particle Max Velocity", &(particles->maxVelocity)).updateFn( [this] { particles->syncVelocity(); } );
+    
+    mParams->addParam( "Ink Persistence", &(ink->persistence)).min(.9f).max(1.0f);
+    mParams->addParam( "Ink Threshold", &(ink->threshold)).min(.0f).max(1.0f);
+    mParams->addParam( "Ink Max Rate", &(ink->maxRate)).min(.0f).max(.25f);
 }
 
 
@@ -133,7 +146,7 @@ void DrawRenderApp::resize()
 void DrawRenderApp::update()
 {
     renderToFBO();
-    particles->update();
+    particles->update(sceneFbo.get());
     ink->update(sceneFbo.get(), particles->getFbo());
 }
 
@@ -145,7 +158,7 @@ void DrawRenderApp::draw()
     gl::clear();
     gl::draw( ink->getFbo()->getTexture(0), getWindowBounds() );
 	   
-    //mParams->draw();
+    mParams->draw();
     
 }
 
