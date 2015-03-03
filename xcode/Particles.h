@@ -39,12 +39,16 @@ public:
     void syncVelocity();
     void setNumParticles(int count);
     int getNumParticles();
+    void syncColor();
     void draw();
     gl::Fbo * getFbo();
     float pointSizeMul;
     float pointSizeVariation;
     float minVelocity;
     float maxVelocity;
+    ColorA tone0;
+    ColorA tone1;
+    ColorA tone2;
     
 private:
     
@@ -56,7 +60,7 @@ private:
     void resetFromOuterArea(Particle& p, const Area& bounds);
     
     vector<Particle> particles;
-    vector<Color> colors;
+    vector<ColorA> colors;
     gl::VboMeshRef mVbo;
     unique_ptr<gl::Fbo> mFbo;
     gl::GlslProgRef mShader;

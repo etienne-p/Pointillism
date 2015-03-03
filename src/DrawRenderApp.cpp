@@ -69,12 +69,16 @@ void DrawRenderApp::setup()
     mParams->addParam( "Particle Size", &(particles->pointSizeMul)).min(.0f).max(20.0f);
     mParams->addParam( "Particle Size Variation", &(particles->pointSizeVariation)).min(.0f).max(1.0f);
     
-	std::function<void( int )> setter	= std::bind( &Particles::setNumParticles, particles.get(), std::placeholders::_1 );
-	std::function<int ()> getter		= std::bind( &Particles::getNumParticles, particles.get() );
-	mParams->addParam( "Particles Number", setter, getter );
+	std::function<void( int )> setterNumParticles = std::bind( &Particles::setNumParticles, particles.get(), std::placeholders::_1 );
+	std::function<int ()> getterNumParticles	  = std::bind( &Particles::getNumParticles, particles.get() );
+	mParams->addParam( "Particles Number", setterNumParticles, getterNumParticles );
     
     mParams->addParam( "Particle Min Velocity", &(particles->minVelocity)).updateFn( [this] { particles->syncVelocity(); } );
     mParams->addParam( "Particle Max Velocity", &(particles->maxVelocity)).updateFn( [this] { particles->syncVelocity(); } );
+    
+    mParams->addParam( "Particle Tone 0", &(particles->tone0)).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam(  "Particle Tone 1", &(particles->tone1)).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam("Particle Tone 2", &(particles->tone2)).updateFn( [this] { particles->syncColor(); } );
     
     mParams->addParam( "Ink Persistence", &(ink->persistence)).min(.9f).max(1.0f);
     mParams->addParam( "Ink Threshold", &(ink->threshold)).min(.0f).max(1.0f);

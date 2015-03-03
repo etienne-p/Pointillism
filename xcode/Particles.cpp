@@ -12,6 +12,7 @@ Particles::Particles(){}
 
 void Particles::setup(int count, float fboWidth, float fboHeight)
 {
+    
     mFbo = unique_ptr<gl::Fbo>(new gl::Fbo(fboWidth, fboHeight));
     
     mShader =  gl::GlslProg::create( loadResource( RES_PARTICLES_VERT ), loadResource( RES_PARTICLES_FRAG ) );
@@ -31,7 +32,6 @@ void Particles::update(gl::Fbo * sceneFbo)
     renderFbo(sceneFbo);
 }
 
-
 int Particles::getNumParticles()
 {
     return particles.size();
@@ -45,22 +45,35 @@ void Particles::setNumParticles(int count)
     
     gl::VboMesh::Layout layout;
     layout.setDynamicPositions();
-    layout.setStaticColorsRGB();
+    layout.setStaticColorsRGBA();
     mVbo = gl::VboMesh::create(count, 0, layout, GL_POINTS);
-    
-    vector<Color> baseColors;
-    baseColors.push_back(Color(1.0f, .0f, .0f));
-    baseColors.push_back(Color(1.0f, 1.0f, .0f));
-    baseColors.push_back(Color(1.0f, 1.0f, 1.0f));
     
     for (int i = 0; i < count; ++i)
     {
-        colors.push_back(baseColors[i % baseColors.size()]);
         Particle p;
         reset(p, mFbo->getBounds());
         particles.push_back(p);
     }
-    mVbo->bufferColorsRGB(colors);
+    
+    syncColor();
+}
+
+void Particles::syncColor()
+{
+    if (mVbo == nullptr) return;
+    
+    colors.clear();
+    
+    vector<ColorA> tones;
+    tones.push_back(tone0);
+    tones.push_back(tone1);
+    tones.push_back(tone2);
+    
+    for (int i = 0, count = particles.size(); i < count; ++i)
+    {
+        colors.push_back(tones[i % tones.size()]);
+    }
+    mVbo->bufferColorsRGBA(colors);
 }
 
 void Particles::syncVelocity()
