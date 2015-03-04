@@ -87,7 +87,7 @@ void Particles::updatePhysics()
 {
     // update particles & sync vertices on particles
     gl::VboMesh::VertexIter iter = mVbo->mapVertexBuffer();
-    int particlesCount = particles.size();
+    const int particlesCount = particles.size();
     for( int i = 0; i < particlesCount; ++i ) {
         particles[i].position += particles[i].velocity;
         if (!mFbo->getBounds().contains(particles[i].position))

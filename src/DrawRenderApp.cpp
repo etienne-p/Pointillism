@@ -50,6 +50,9 @@ class DrawRenderApp : public AppBasic {
 
 void DrawRenderApp::setup()
 {
+    
+
+    
     ObjLoader loader( (DataSourceRef)loadResource( RES_TEAPOT_OBJ ) );
     loader.load( &mTeapotMesh );
     mTeapotVBO = gl::VboMesh::create( mTeapotMesh);
@@ -59,14 +62,26 @@ void DrawRenderApp::setup()
     sceneFbo = unique_ptr<gl::Fbo>(new gl::Fbo( FBO_WIDTH, FBO_HEIGHT ));
     
     ink = unique_ptr<Ink>(new Ink());
-    ink->setup(FBO_WIDTH, FBO_HEIGHT);
-    
     particles = unique_ptr<Particles>(new Particles());
-    particles->setup(4000, FBO_WIDTH, FBO_HEIGHT);
+    
+    // DEFAULT PARAMS
+    particles->pointSizeMul = 20;
+    particles->pointSizeVariation = .5f;
+    particles->minVelocity = .05f;
+    particles->maxVelocity = .2f;
+    particles->tone0.set(.0f, .0f, 1.0f, 1.0f);
+    particles->tone1.set(.0f, .6f, 1.0f, 1.0f);
+    particles->tone2.set(.6f, .0f, 1.0f, 1.0f);
+    ink->persistence = .94f;
+    ink->threshold = .8f;
+    ink->maxRate = .01f;
+    
+    ink->setup(FBO_WIDTH, FBO_HEIGHT);
+    particles->setup(12000, FBO_WIDTH, FBO_HEIGHT);
     
     mParams = params::InterfaceGl::create( "Params", Vec2i( 225, 200 ) );
     
-    mParams->addParam( "Particle Size", &(particles->pointSizeMul)).min(.0f).max(20.0f);
+    mParams->addParam( "Particle Size", &(particles->pointSizeMul)).min(.0f).max(80.0f);
     mParams->addParam( "Particle Size Variation", &(particles->pointSizeVariation)).min(.0f).max(1.0f);
     
 	std::function<void( int )> setterNumParticles = std::bind( &Particles::setNumParticles, particles.get(), std::placeholders::_1 );
@@ -77,14 +92,13 @@ void DrawRenderApp::setup()
     mParams->addParam( "Particle Max Velocity", &(particles->maxVelocity)).updateFn( [this] { particles->syncVelocity(); } );
     
     mParams->addParam( "Particle Tone 0", &(particles->tone0)).updateFn( [this] { particles->syncColor(); } );
-    mParams->addParam(  "Particle Tone 1", &(particles->tone1)).updateFn( [this] { particles->syncColor(); } );
-    mParams->addParam("Particle Tone 2", &(particles->tone2)).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone 1", &(particles->tone1)).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone 2", &(particles->tone2)).updateFn( [this] { particles->syncColor(); } );
     
     mParams->addParam( "Ink Persistence", &(ink->persistence)).min(.9f).max(1.0f);
     mParams->addParam( "Ink Threshold", &(ink->threshold)).min(.0f).max(1.0f);
-    mParams->addParam( "Ink Max Rate", &(ink->maxRate)).min(.0f).max(.25f);
+    mParams->addParam( "Ink Max Rate", &(ink->maxRate)).min(.0f).max(1.0f);
 }
-
 
 void DrawRenderApp::drawModel(const Matrix44f& modelMatrix)
 {
