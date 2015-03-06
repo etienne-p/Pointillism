@@ -65,9 +65,9 @@ void Particles::syncColor()
     colors.clear();
     
     vector<ColorA> tones;
-    tones.push_back(tone0);
-    tones.push_back(tone1);
-    tones.push_back(tone2);
+    tones.push_back(ColorA(CM_HSV, colorCenter, colorSaturation, colorLightness));
+    tones.push_back(ColorA(CM_HSV, colorCenter - colorSpread, colorSaturation, colorLightness));
+    tones.push_back(ColorA(CM_HSV, colorCenter + colorSpread, colorSaturation, colorLightness));
     
     for (int i = 0, count = particles.size(); i < count; ++i)
     {

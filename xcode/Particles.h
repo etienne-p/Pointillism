@@ -46,9 +46,10 @@ public:
     float pointSizeVariation;
     float minVelocity;
     float maxVelocity;
-    ColorA tone0;
-    ColorA tone1;
-    ColorA tone2;
+    float colorSpread;
+    float colorCenter;
+    float colorSaturation;
+    float colorLightness;
     
 private:
     
