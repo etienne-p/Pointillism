@@ -46,8 +46,8 @@ public:
     float pointSizeVariation;
     float minVelocity;
     float maxVelocity;
-    float colorSpread;
-    float colorCenter;
+    float colorHueSpread;
+    float colorHueCenter;
     float colorSaturation;
     float colorLightness;
     

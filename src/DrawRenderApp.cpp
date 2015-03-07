@@ -88,10 +88,10 @@ void DrawRenderApp::setup()
     mParams->addParam( "Particle Min Velocity", &(particles->minVelocity)).updateFn( [this] { particles->syncVelocity(); } );
     mParams->addParam( "Particle Max Velocity", &(particles->maxVelocity)).updateFn( [this] { particles->syncVelocity(); } );
     
-    mParams->addParam( "Particle Tone Center", &(particles->colorCenter)).updateFn( [this] { particles->syncColor(); } );
-    mParams->addParam( "Particle Tone Spread", &(particles->colorSpread)).updateFn( [this] { particles->syncColor(); } );
-    mParams->addParam( "Particle Tone Saturation", &(particles->colorSaturation)).updateFn( [this] { particles->syncColor(); } );
-    mParams->addParam( "Particle Tone Lightness", &(particles->colorLightness)).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone Hue Center", &(particles->colorHueCenter)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone Hue Spread", &(particles->colorHueSpread)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone Saturation", &(particles->colorSaturation)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
+    mParams->addParam( "Particle Tone Lightness", &(particles->colorLightness)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
     
     mParams->addParam( "Ink Persistence", &(ink->persistence)).min(.9f).max(1.0f);
     mParams->addParam( "Ink Threshold", &(ink->threshold)).min(.0f).max(1.0f);
