@@ -26,6 +26,7 @@ class DrawRenderApp : public AppBasic {
 	void mouseMove( MouseEvent event );
 	void update();
 	void draw();
+    void prepareSettings( Settings *settings );
     void resize(); //TODO: remove, is AppBAsic the best choice?
     void renderToFBO();
     
@@ -48,6 +49,11 @@ class DrawRenderApp : public AppBasic {
     static const int FBO_WIDTH = 1024, FBO_HEIGHT = 1024;
 };
 
+void DrawRenderApp::prepareSettings( Settings *settings ){
+    settings->setWindowSize( 1024, 1024 );
+    settings->setFrameRate( 60.0f );
+}
+
 void DrawRenderApp::setup()
 {
     
@@ -69,6 +75,10 @@ void DrawRenderApp::setup()
     particles->pointSizeVariation = .5f;
     particles->minVelocity = .05f;
     particles->maxVelocity = .2f;
+    particles->colorHueCenter = .66f;
+    particles->colorHueSpread = .11f;
+    particles->colorSaturation = 1.0f;
+    particles->colorLightness = .1f;
     ink->persistence = .94f;
     ink->threshold = .8f;
     ink->maxRate = .01f;
@@ -168,14 +178,14 @@ void DrawRenderApp::update()
 
 void DrawRenderApp::draw()
 {
-    
     gl::setMatricesWindow( getWindowSize() );
     gl::setViewport( getWindowBounds() );
     gl::clear();
-    gl::draw( ink->getFbo()->getTexture(0), getWindowBounds() );
-	   
+    glPushMatrix();
+    glTranslatef(((float)getWindowWidth() - ink->getFbo()->getBounds().getWidth()) * .5f, ((float)getWindowHeight() - ink->getFbo()->getBounds().getHeight()) * .5f, .0f);
+    gl::draw( ink->getFbo()->getTexture(0), ink->getFbo()->getBounds() );
+    glPopMatrix();
     mParams->draw();
-    
 }
 
 CINDER_APP_NATIVE( DrawRenderApp, RendererGl )
