@@ -25,8 +25,8 @@
 		E41CE4D31A9E46E90040AC5A /* particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = E41CE4C91A9E46E90040AC5A /* particles.vert */; };
 		E41CE4D41A9E46E90040AC5A /* dot.png in Resources */ = {isa = PBXBuildFile; fileRef = E41CE4CB1A9E46E90040AC5A /* dot.png */; };
 		E41CE4D51A9E46E90040AC5A /* noise.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E41CE4CC1A9E46E90040AC5A /* noise.jpg */; };
-		E4E3AEA91A9B9443002A7FE9 /* Particles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4E3AEA71A9B9443002A7FE9 /* Particles.cpp */; };
-		E4E3AEAC1A9B9886002A7FE9 /* Ink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4E3AEAA1A9B9886002A7FE9 /* Ink.cpp */; };
+		E4EB93C01AB9DB9C0092DE06 /* Ink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EB93BC1AB9DB9C0092DE06 /* Ink.cpp */; };
+		E4EB93C11AB9DB9C0092DE06 /* Particles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EB93BE1AB9DB9C0092DE06 /* Particles.cpp */; };
 		EBA4A8EB85C643D1BB9C6BB2 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2E545DE6CA504EEC9C186227 /* CinderApp.icns */; };
 /* End PBXBuildFile section */
 
@@ -56,10 +56,10 @@
 		E41CE4C91A9E46E90040AC5A /* particles.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particles.vert; sourceTree = "<group>"; };
 		E41CE4CB1A9E46E90040AC5A /* dot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dot.png; sourceTree = "<group>"; };
 		E41CE4CC1A9E46E90040AC5A /* noise.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = noise.jpg; sourceTree = "<group>"; };
-		E4E3AEA71A9B9443002A7FE9 /* Particles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Particles.cpp; sourceTree = "<group>"; };
-		E4E3AEA81A9B9443002A7FE9 /* Particles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Particles.h; sourceTree = "<group>"; };
-		E4E3AEAA1A9B9886002A7FE9 /* Ink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ink.cpp; sourceTree = "<group>"; };
-		E4E3AEAB1A9B9886002A7FE9 /* Ink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ink.h; sourceTree = "<group>"; };
+		E4EB93BC1AB9DB9C0092DE06 /* Ink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ink.cpp; path = ../src/Ink.cpp; sourceTree = "<group>"; };
+		E4EB93BD1AB9DB9C0092DE06 /* Ink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ink.h; path = ../src/Ink.h; sourceTree = "<group>"; };
+		E4EB93BE1AB9DB9C0092DE06 /* Particles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Particles.cpp; path = ../src/Particles.cpp; sourceTree = "<group>"; };
+		E4EB93BF1AB9DB9C0092DE06 /* Particles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particles.h; path = ../src/Particles.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,11 +91,11 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				E4EB93BC1AB9DB9C0092DE06 /* Ink.cpp */,
+				E4EB93BD1AB9DB9C0092DE06 /* Ink.h */,
+				E4EB93BE1AB9DB9C0092DE06 /* Particles.cpp */,
+				E4EB93BF1AB9DB9C0092DE06 /* Particles.h */,
 				1925B14FC13944FA8BA643A5 /* DrawRenderApp.cpp */,
-				E4E3AEA71A9B9443002A7FE9 /* Particles.cpp */,
-				E4E3AEA81A9B9443002A7FE9 /* Particles.h */,
-				E4E3AEAA1A9B9886002A7FE9 /* Ink.cpp */,
-				E4E3AEAB1A9B9886002A7FE9 /* Ink.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -280,9 +280,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4E3AEAC1A9B9886002A7FE9 /* Ink.cpp in Sources */,
+				E4EB93C11AB9DB9C0092DE06 /* Particles.cpp in Sources */,
+				E4EB93C01AB9DB9C0092DE06 /* Ink.cpp in Sources */,
 				1BA1D3AFA8804957A789EEBB /* DrawRenderApp.cpp in Sources */,
-				E4E3AEA91A9B9443002A7FE9 /* Particles.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
