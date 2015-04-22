@@ -79,7 +79,7 @@ void DrawRenderApp::setup()
     particles->colorHueSpread = .11f;
     particles->colorSaturation = 1.0f;
     particles->colorLightness = .1f;
-    ink->persistence = .94f;
+    ink->evaporation = .05f;
     ink->threshold = .8f;
     ink->maxRate = .01f;
     
@@ -103,7 +103,7 @@ void DrawRenderApp::setup()
     mParams->addParam( "Particle Tone Saturation", &(particles->colorSaturation)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
     mParams->addParam( "Particle Tone Lightness", &(particles->colorLightness)).min(.0f).max(1.0f).updateFn( [this] { particles->syncColor(); } );
     
-    mParams->addParam( "Ink Persistence", &(ink->persistence)).min(.9f).max(1.0f);
+    mParams->addParam( "Ink Evaporation", &(ink->evaporation)).min(.0f).max(.1f);
     mParams->addParam( "Ink Threshold", &(ink->threshold)).min(.0f).max(1.0f);
     mParams->addParam( "Ink Max Rate", &(ink->maxRate)).min(.0f).max(1.0f);
 }

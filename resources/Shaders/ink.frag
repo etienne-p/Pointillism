@@ -3,9 +3,11 @@
 uniform sampler2D previousFrame; // previous ink cells state
 uniform sampler2D noise;
 uniform sampler2D pen;
-uniform float persistence;
+uniform float evaporation;
 uniform float threshold;
 uniform float maxRate;
+
+vec4 evaporationVec4 = vec4(evaporation, evaporation, evaporation, evaporation);
 
 void main(void)
 {
@@ -18,7 +20,7 @@ void main(void)
     // The solution is simple: invert your bitmap or invert your model's texcoord by doing 1.0 - v.
     prevCoord.y = 1.0 - prevCoord.y;
     
-    vec4 prev   = texture2D(previousFrame, prevCoord);
+    vec4 prev = max(vec4(0.0, 0.0, 0.0, 0.0), texture2D(previousFrame, prevCoord) - evaporationVec4);
     float d = 1.0 / 1024.0;
 
     vec4 top    = texture2D(previousFrame, prevCoord + vec2(0.0,  -d));
@@ -46,6 +48,5 @@ void main(void)
 
     vec4 sc = texture2D(pen, gl_TexCoord[0].xy);
     vec4 noise = texture2D(noise, gl_TexCoord[0].xy);
-    gl_FragColor = ((prev + vec4(exchangeR, exchangeG, exchangeB, 1.0) * 0.25) * persistence) + sc * noise;
-
+    gl_FragColor = vec4(exchangeR, exchangeG, exchangeB, 1.0) * 0.25 + prev + sc * noise;
 }
